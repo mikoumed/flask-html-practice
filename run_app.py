@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, redirect, url_for, abort, render_template
 
 
+
 app = Flask(__name__)
 
 @app.route('/index')
@@ -40,17 +41,28 @@ def post_login_form():
 
 
 # NOTE: Use '/login-form' as URL for this view in order to make tests pass
+@app.route('/', methods=['GET', 'POST'])
 def login_form():
     """
         Reply the examples given above in one single view. You can use request.method
         to determine which HTTP method was used (either 'GET' or 'POST'),
         and perform one action or another.
     """
-    pass
+    if request.method == 'GET':
+        return render_template('login_form.html')
+        
+    elif request.method == 'POST':
+        user = request.form.get('username')
+        password = request.form.get('password')
+        if user and password:
+            return redirect(url_for('index', user=user))
+        else:
+            abort(404)
 
 
 # Extra task
 # NOTE: Use '/profile' URL for this view
+@app.route('/profile')
 def profile():
     """
         For this task, we'll create a user profile using the USER_DATA given below.
@@ -73,7 +85,7 @@ def profile():
             'Dropbox'
         ]
     }
-    pass
+    return render_template('profile.html', user_data=USER_DATA)
 
 
 if __name__ == '__main__':
